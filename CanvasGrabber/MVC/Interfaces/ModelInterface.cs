@@ -8,5 +8,7 @@ namespace CanvasGrabber.MVC.Interfaces
 {
     interface ModelInterface
     {
+        public void notifyListeners();
+        public void addListener(ViewInterface view);
     }
 }
