@@ -8,6 +8,6 @@ namespace CanvasGrabber.MVC.Interfaces
 {
     interface ViewInterface
     {
-        public void updateView();
+        void UpdateView();
     }
 }

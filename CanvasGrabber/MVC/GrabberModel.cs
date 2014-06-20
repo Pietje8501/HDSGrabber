@@ -11,6 +11,14 @@ namespace CanvasGrabber.MVC
     {
         private List<ViewInterface> listeners;
 
+        private string grabberStatus;
+
+        public string GrabberStatus
+        {
+            get { return grabberStatus; }
+            set { grabberStatus = value; }
+        }
+
         private int nbTotalFragments;
 
         public int NbTotalFragments
@@ -35,13 +43,24 @@ namespace CanvasGrabber.MVC
             set { videoTitle = value; }
         }
 
-        public GrabberModel();
+        public GrabberModel()
+        {
 
-        private override void notifyListeners()
+        }
+
+        public void NotifyListeners()
         {
             foreach (ViewInterface vi in listeners)
             {
-                vi.updateView();
+                vi.UpdateView();
+            }
+        }
+
+        public void AddListener(ViewInterface vi)
+        {
+            if (!listeners.Contains(vi))
+            {
+                listeners.Add(vi);
             }
         }
 

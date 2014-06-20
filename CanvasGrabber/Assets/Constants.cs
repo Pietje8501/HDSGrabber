@@ -15,5 +15,6 @@ namespace CanvasGrabber.Assets
         public const string channelKey      = "channel";
         public const string itemsKey        = "items";
         public const string itemKey         = "item";
+        public const string guidIdRegex      = "theGuid = '[0-9]+'";
     }
 }
