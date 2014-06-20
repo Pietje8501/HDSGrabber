@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Data;
 using System.Net;
+using System.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -48,8 +50,8 @@ namespace CanvasGrabber.Client.Download
                 if (match.Success)
                 {
                     var guid = match.Value.Split('\'').ToList()[1];
-                    SearchManifestUri(Constants.baseUri + guid + Constants.baseUriFormat);
-                    return true;
+                    var res = await SearchManifestUri(Constants.baseUri + guid + Constants.baseUriFormat);
+                    return res;
                 }
             }
             catch (Exception e)
@@ -60,9 +62,21 @@ namespace CanvasGrabber.Client.Download
             return false;
         }
 
-        public void SearchManifestUri(string playlistUri)
+        public async Task<bool> SearchManifestUri(string playlistUri)
         {
-
+            try
+            {
+                WebClient client = new WebClient();
+                string result = await client.DownloadStringTaskAsync(new Uri(playlistUri));
+                JsonObject obj = JsonValue.Parse(result) as JsonObject;    
+                
+            }
+            catch (Exception e)
+            {
+                Model.GrabberStatus = e.Message;
+                return false;
+            }
+            return false;
         }
 
         public void SetManifest(string uri)

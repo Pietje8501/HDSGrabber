@@ -36,7 +36,7 @@ namespace CanvasGrabber
                 if (!String.IsNullOrEmpty(txtManifestUri.Text))
                 {
                     txtProgress.Text = "Starting grabber...";
-                    _grabber.setManifest(txtManifestUri.Text);
+                    _grabber.SetManifest(txtManifestUri.Text);
                     _grabber.start();
                 }
                 else
@@ -50,7 +50,7 @@ namespace CanvasGrabber
                 if(!String.IsNullOrEmpty(txtWebsiteUri.Text)){
                     txtProgress.Text = "Searching for manifest file...";
                     progressDownload.Visibility = Visibility.Visible;
-                    bool found = await _grabber.searchManifest(txtWebsiteUri.Text);
+                    bool found = await _grabber.SearchPlaylist(txtWebsiteUri.Text);
                     if(!found){
                         progressDownload.Visibility = Visibility.Hidden;
                         txtProgress.Text = "Manifest not found...";
