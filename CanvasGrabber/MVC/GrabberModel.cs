@@ -16,7 +16,10 @@ namespace CanvasGrabber.MVC
         public string GrabberStatus
         {
             get { return grabberStatus; }
-            set { grabberStatus = value; }
+            set { 
+                grabberStatus = value;
+                NotifyListeners();
+            }
         }
 
         private int nbTotalFragments;
@@ -45,7 +48,7 @@ namespace CanvasGrabber.MVC
 
         public GrabberModel()
         {
-
+            listeners = new List<ViewInterface>();
         }
 
         public void NotifyListeners()

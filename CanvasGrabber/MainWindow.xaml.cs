@@ -13,24 +13,32 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CanvasGrabber.Client.Download;
+using CanvasGrabber.MVC.Interfaces;
 
 namespace CanvasGrabber
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, ViewInterface
     {
         private HLSGrabber _grabber;
 
         public MainWindow()
         {
             _grabber = new HLSGrabber();
+            _grabber.Model.AddListener(this);
             InitializeComponent();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void btnDownload_Click(object sender, RoutedEventArgs e)
         {
+            //TODO check for correct uri; starts with http etc
             if (chkManifest.IsChecked.Value)
             {
                 if (!String.IsNullOrEmpty(txtManifestUri.Text))
@@ -53,9 +61,7 @@ namespace CanvasGrabber
                     bool found = await _grabber.SearchPlaylist(txtWebsiteUri.Text);
                     if(!found){
                         progressDownload.Visibility = Visibility.Hidden;
-                        txtProgress.Text = "Manifest not found...";
                     } else {
-                        txtProgress.Text = "Starting grabber...";
                         _grabber.start();
                     }
                 }
@@ -68,6 +74,16 @@ namespace CanvasGrabber
             }
         }
 
-
+        public void UpdateView()
+        {
+            if (!String.IsNullOrEmpty(txtProgress.Text))
+            {
+                if (txtProgress.Text != _grabber.Model.GrabberStatus)
+                {
+                    txtProgress.Text = _grabber.Model.GrabberStatus;
+                }
+            }
+        }
+        
     }
 }

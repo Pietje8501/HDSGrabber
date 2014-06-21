@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
-using System.Net;
 using System.Json;
+using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,9 +27,9 @@ namespace CanvasGrabber.Client.Download
             Model = new GrabberModel();    
         }
 
-        private Uri _grabberManifestUri;
+        private List<Uri> _grabberManifestUri;
 
-        public Uri GrabberManifestUri
+        public List<Uri> GrabberManifestUri
         {
             get { return _grabberManifestUri; }
             set { _grabberManifestUri = value; }
@@ -68,8 +68,19 @@ namespace CanvasGrabber.Client.Download
             {
                 WebClient client = new WebClient();
                 string result = await client.DownloadStringTaskAsync(new Uri(playlistUri));
-                JsonObject obj = JsonValue.Parse(result) as JsonObject;    
-                
+                // System.Json is not a fan of the stuff in front of the braces
+                string json = result.Substring(result.IndexOf('(') + 1, result.LastIndexOf(')') - 1 - result.IndexOf('('));
+                JsonObject obj = JsonValue.Parse(json) as JsonObject;
+                //JsonArray items = (JsonArray)obj[Constants.channelKey][Constants.itemsKey];
+                var manifest = obj[Constants.channelKey][Constants.itemsKey][0][Constants.itemKey][Constants.playlistKey];
+                var title = obj[Constants.channelKey][Constants.itemsKey][0][Constants.itemKey][Constants.titleKey];
+                if (!String.IsNullOrEmpty(manifest.ToString()))
+                {
+                    Model.GrabberStatus = "Found manifest for " + title;
+                    var unescaped = manifest.ToString().Replace("\\","").Replace("\"", "");
+                    SetManifest(unescaped);
+                    return true;
+                }
             }
             catch (Exception e)
             {
@@ -81,7 +92,11 @@ namespace CanvasGrabber.Client.Download
 
         public void SetManifest(string uri)
         {
-            GrabberManifestUri = new Uri(uri);
+            if (GrabberManifestUri == null)
+            {
+                GrabberManifestUri = new List<Uri>();
+            }
+            GrabberManifestUri.Add(new Uri(uri));
         }
 
 
