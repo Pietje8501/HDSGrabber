@@ -65,8 +65,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Assets\Constants.cs" />
-    <Compile Include="Client\Download\HLSGrabber.cs" />
-    <Compile Include="Client\HLS\HLSManifest.cs" />
+    <Compile Include="Client\Download\HDSGrabber.cs" />
+    <Compile Include="Client\HDS\HDSManifest.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

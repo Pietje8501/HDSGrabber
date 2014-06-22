@@ -9,10 +9,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CanvasGrabber.Assets;
 using CanvasGrabber.MVC;
+using CanvasGrabber.Client.HDS;
 
 namespace CanvasGrabber.Client.Download
 {
-    class HLSGrabber
+    class HDSGrabber
     {
         private GrabberModel _model;
 
@@ -22,18 +23,19 @@ namespace CanvasGrabber.Client.Download
             set { _model = value; }
         }
 
-        public HLSGrabber()
+        public HDSGrabber()
         {
             Model = new GrabberModel();    
         }
 
-        private List<Uri> _grabberManifestUri;
+        private HDSManifest _grabberManifest;
 
-        public List<Uri> GrabberManifestUri
+        public HDSManifest GrabberManifest
         {
-            get { return _grabberManifestUri; }
-            set { _grabberManifestUri = value; }
+            get { return _grabberManifest; }
+            set { _grabberManifest = value; }
         }
+
 
         public async void start()
         {
@@ -71,15 +73,15 @@ namespace CanvasGrabber.Client.Download
                 // System.Json is not a fan of the stuff in front of the braces
                 string json = result.Substring(result.IndexOf('(') + 1, result.LastIndexOf(')') - 1 - result.IndexOf('('));
                 JsonObject obj = JsonValue.Parse(json) as JsonObject;
-                //JsonArray items = (JsonArray)obj[Constants.channelKey][Constants.itemsKey];
-                var manifest = obj[Constants.channelKey][Constants.itemsKey][0][Constants.itemKey][Constants.playlistKey];
-                var title = obj[Constants.channelKey][Constants.itemsKey][0][Constants.itemKey][Constants.titleKey];
+                // Extract some information in a rather dirty way from Json object
+                var manifest    = obj[Constants.channelKey][Constants.itemsKey][0][Constants.itemKey][Constants.playlistKey];
+                var title       = obj[Constants.channelKey][Constants.itemsKey][0][Constants.itemKey][Constants.titleKey];
                 if (!String.IsNullOrEmpty(manifest.ToString()))
                 {
                     Model.GrabberStatus = "Found manifest for " + title;
                     var unescaped = manifest.ToString().Replace("\\","").Replace("\"", "");
-                    SetManifest(unescaped);
-                    return true;
+                    var success = await SetManifest(unescaped);
+                    return success;
                 }
             }
             catch (Exception e)
@@ -90,16 +92,21 @@ namespace CanvasGrabber.Client.Download
             return false;
         }
 
-        public void SetManifest(string uri)
+        public async Task<bool> SetManifest(string uri)
         {
-            if (GrabberManifestUri == null)
+            GrabberManifest = new HDSManifest(uri);
+            GrabberManifest.Model = Model;
+            var success = await GrabberManifest.ParseManifest();
+            if (success)
             {
-                GrabberManifestUri = new List<Uri>();
+                Model.GrabberStatus = "Manifest successfully parsed... Starting grabber...";
+                return true;
             }
-            GrabberManifestUri.Add(new Uri(uri));
+            else
+            {
+                Model.GrabberStatus = "Error parsing manifest...";
+            }
+            return false;
         }
-
-
-
     }
 }

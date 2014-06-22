@@ -22,11 +22,11 @@ namespace CanvasGrabber
     /// </summary>
     public partial class MainWindow : Window, ViewInterface
     {
-        private HLSGrabber _grabber;
+        private HDSGrabber _grabber;
 
         public MainWindow()
         {
-            _grabber = new HLSGrabber();
+            _grabber = new HDSGrabber();
             _grabber.Model.AddListener(this);
             InitializeComponent();
         }
@@ -43,9 +43,11 @@ namespace CanvasGrabber
             {
                 if (!String.IsNullOrEmpty(txtManifestUri.Text))
                 {
-                    txtProgress.Text = "Starting grabber...";
-                    _grabber.SetManifest(txtManifestUri.Text);
-                    _grabber.start();
+                    var success = await _grabber.SetManifest(txtManifestUri.Text);
+                    if (success)
+                    {
+                        _grabber.start();
+                    }
                 }
                 else
                 {
