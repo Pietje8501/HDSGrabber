@@ -85,6 +85,7 @@ namespace CanvasGrabber.Client.Utility
         public string GetString()
         {
             StringBuilder b = new StringBuilder();
+            b.Append(GetString(1));
             while (b.ToString()[b.ToString().Length - 1] != Constants.EOF)
             {
                 b.Append(GetString(1));
