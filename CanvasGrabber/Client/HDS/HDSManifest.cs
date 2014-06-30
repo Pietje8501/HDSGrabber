@@ -34,6 +34,7 @@ namespace CanvasGrabber.Client.HDS
         {
             try
             {
+                Model.GrabberStatus = "Downloading Manifest";
                 WebClient client = new WebClient();
                 var manifest = await client.DownloadStringTaskAsync(ManifestUri);
             }

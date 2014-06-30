@@ -67,6 +67,7 @@
     <Compile Include="Assets\Constants.cs" />
     <Compile Include="Client\Download\HDSGrabber.cs" />
     <Compile Include="Client\HDS\HDSManifest.cs" />
+    <Compile Include="Client\Utility\ByteReader.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
